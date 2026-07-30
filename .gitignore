@@ -33,7 +33,7 @@ dependency-check-report*
 spotbugs*
 
 # Superpowers dev artifacts
-.superpowers/sdd/
+.superpowers/
 
 # IDE
 .idea/
