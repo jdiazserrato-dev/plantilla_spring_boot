@@ -1,5 +1,7 @@
 package com.jorel.template_api.persistence.datasource;
 
+import java.util.Optional;
+
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import jakarta.annotation.PostConstruct;
@@ -9,9 +11,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
+@SuppressWarnings({"PMD.AvoidCatchingGenericException", "PMD.GuardLogStatement"})
 public class HikariDataSourceProvider {
 
-    private HikariDataSource dataSource;
+    private Optional<HikariDataSource> dataSource = Optional.empty();
 
     private boolean dbAvailable;
 
@@ -28,7 +31,7 @@ public class HikariDataSourceProvider {
     public void init() {
         if (dbUrl == null || dbUrl.isEmpty()) {
             log.warn("⚠️ No se encontró configuración de base de datos. El proyecto levantará sin BD.");
-            this.dataSource = null;
+            this.dataSource = Optional.empty();
             this.dbAvailable = false;
             return;
         }
@@ -41,18 +44,18 @@ public class HikariDataSourceProvider {
             config.setDriverClassName("com.mysql.cj.jdbc.Driver");
             config.setInitializationFailTimeout(5000);
 
-            this.dataSource = new HikariDataSource(config);
+            this.dataSource = Optional.of(new HikariDataSource(config));
             log.info("✅ Conexión a base de datos establecida: {}", dbUrl);
             this.dbAvailable = true;
         } catch (Exception e) {
             log.warn("⚠️ No se pudo conectar a la base de datos: {}. El proyecto levantará sin BD.", e.getMessage());
-            this.dataSource = null;
+            this.dataSource = Optional.empty();
             this.dbAvailable = false;
         }
     }
 
     public HikariDataSource getDataSource() {
-        return dataSource;
+        return dataSource.orElse(null);
     }
 
     public boolean isDbAvailable() {

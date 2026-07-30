@@ -1,5 +1,7 @@
 package com.jorel.template_api.util;
 
+import java.util.Locale;
+
 import com.jorel.template_api.enums.Environment;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -7,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
+@SuppressWarnings("PMD.GuardLogStatement")
 public class ScopeUtils {
 
     @Value("${spring.profiles.active:local}")
@@ -30,7 +33,7 @@ public class ScopeUtils {
 
     public void logProfileInfo() {
         log.info("========================================");
-        log.info("  Perfil activo: {}", activeProfile.toUpperCase());
+        log.info("  Perfil activo: {}", activeProfile.toUpperCase(Locale.ROOT));
         log.info("  Entorno: {}", getEnvironmentDescription());
         log.info("========================================");
     }
