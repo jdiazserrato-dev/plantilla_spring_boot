@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class HealthCheck {
     private Long id;
+
     private String status;
+
     private LocalDateTime createdAt;
 }

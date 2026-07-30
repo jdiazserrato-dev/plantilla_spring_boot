@@ -32,6 +32,9 @@ dependency-check-report*
 # SpotBugs output
 spotbugs*
 
+# Superpowers dev artifacts
+.superpowers/sdd/
+
 # IDE
 .idea/
 *.iml
