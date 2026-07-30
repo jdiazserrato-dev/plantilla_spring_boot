@@ -1,34 +1,43 @@
 package com.jorel.template_api.persistence.datasource;
 
+import java.util.Optional;
+
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import java.sql.Connection;
 
 @Component
 @Slf4j
+@SuppressWarnings({"PMD.AvoidCatchingGenericException", "PMD.GuardLogStatement"})
 public class HikariDataSourceProvider {
 
-    private HikariDataSource dataSource;
+    private Optional<HikariDataSource> dataSource = Optional.empty();
+
     private boolean dbAvailable;
 
-    @Value("${spring.datasource.url:}")
-    private String dbUrl;
+    private final String dbUrl;
 
-    @Value("${spring.datasource.username:}")
-    private String dbUsername;
+    private final String dbUsername;
 
-    @Value("${spring.datasource.password:}")
-    private String dbPassword;
+    private final String dbPassword;
+
+    public HikariDataSourceProvider(
+            @Value("${spring.datasource.url:}") String dbUrl,
+            @Value("${spring.datasource.username:}") String dbUsername,
+            @Value("${spring.datasource.password:}") String dbPassword) {
+        this.dbUrl = dbUrl;
+        this.dbUsername = dbUsername;
+        this.dbPassword = dbPassword;
+    }
 
     @PostConstruct
     public void init() {
         if (dbUrl == null || dbUrl.isEmpty()) {
             log.warn("⚠️ No se encontró configuración de base de datos. El proyecto levantará sin BD.");
-            this.dataSource = null;
+            this.dataSource = Optional.empty();
             this.dbAvailable = false;
             return;
         }
@@ -41,18 +50,22 @@ public class HikariDataSourceProvider {
             config.setDriverClassName("com.mysql.cj.jdbc.Driver");
             config.setInitializationFailTimeout(5000);
 
-            this.dataSource = new HikariDataSource(config);
+            this.dataSource = Optional.of(createDataSource(config));
             log.info("✅ Conexión a base de datos establecida: {}", dbUrl);
             this.dbAvailable = true;
         } catch (Exception e) {
             log.warn("⚠️ No se pudo conectar a la base de datos: {}. El proyecto levantará sin BD.", e.getMessage());
-            this.dataSource = null;
+            this.dataSource = Optional.empty();
             this.dbAvailable = false;
         }
     }
 
+    HikariDataSource createDataSource(HikariConfig config) {
+        return new HikariDataSource(config);
+    }
+
     public HikariDataSource getDataSource() {
-        return dataSource;
+        return dataSource.orElse(null);
     }
 
     public boolean isDbAvailable() {

@@ -17,4 +17,9 @@ class PingServiceTest {
     void ping_shouldReturnPong() {
         assertEquals("pong", pingService.ping());
     }
+
+    @Test
+    void pingWithTimestamp_shouldReturnPong() {
+        assertEquals("pong", pingService.pingWithTimestamp());
+    }
 }

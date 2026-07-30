@@ -1,5 +1,7 @@
 # Template API
 
+> This is a Spring Boot template project with CI/CD pipeline.
+
 Plantilla base para proyectos Spring Boot con arquitectura en capas, logging AOP, manejo de excepciones, y conexión a MySQL usando JDBI con HikariCP.
 
 ## Stack Tecnológico
