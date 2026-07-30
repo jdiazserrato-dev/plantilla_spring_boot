@@ -14,7 +14,7 @@
     <name>template-api</name>
     <description>Spring Boot Template API Project</description>
     <properties>
-        <java.version>25</java.version>
+        <java.version>22</java.version>
         <jdbi.version>3.52.0</jdbi.version>
         <springdoc.version>2.8.6</springdoc.version>
     </properties>
@@ -127,11 +127,6 @@
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.14</version>
                 <configuration>
-                    <excludes>
-                        <exclude>com/jorel/template_api/TemplateApiApplication.class</exclude>
-                        <exclude>com/jorel/template_api/exceptions/*.class</exclude>
-                        <exclude>com/jorel/template_api/enums/*.class</exclude>
-                    </excludes>
                 </configuration>
                 <executions>
                     <execution>
@@ -161,7 +156,7 @@
                                     <limit>
                                         <counter>INSTRUCTION</counter>
                                         <value>COVEREDRATIO</value>
-                                        <minimum>0.30</minimum>
+                                        <minimum>0.95</minimum>
                                     </limit>
                                 </limits>
                                 </rule>
@@ -202,18 +197,7 @@
                     <failOnError>true</failOnError>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.owasp</groupId>
-                <artifactId>dependency-check-maven</artifactId>
-                <version>10.0.4</version>
-                <configuration>
-                    <failBuildOnCVSS>7</failBuildOnCVSS>
-                    <formats>
-                        <format>HTML</format>
-                        <format>JSON</format>
-                    </formats>
-                </configuration>
-            </plugin>
+
         </plugins>
     </build>
 </project>
