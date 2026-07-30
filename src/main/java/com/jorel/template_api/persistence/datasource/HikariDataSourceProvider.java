@@ -18,14 +18,20 @@ public class HikariDataSourceProvider {
 
     private boolean dbAvailable;
 
-    @Value("${spring.datasource.url:}")
-    private String dbUrl;
+    private final String dbUrl;
 
-    @Value("${spring.datasource.username:}")
-    private String dbUsername;
+    private final String dbUsername;
 
-    @Value("${spring.datasource.password:}")
-    private String dbPassword;
+    private final String dbPassword;
+
+    public HikariDataSourceProvider(
+            @Value("${spring.datasource.url:}") String dbUrl,
+            @Value("${spring.datasource.username:}") String dbUsername,
+            @Value("${spring.datasource.password:}") String dbPassword) {
+        this.dbUrl = dbUrl;
+        this.dbUsername = dbUsername;
+        this.dbPassword = dbPassword;
+    }
 
     @PostConstruct
     public void init() {
@@ -44,7 +50,7 @@ public class HikariDataSourceProvider {
             config.setDriverClassName("com.mysql.cj.jdbc.Driver");
             config.setInitializationFailTimeout(5000);
 
-            this.dataSource = Optional.of(new HikariDataSource(config));
+            this.dataSource = Optional.of(createDataSource(config));
             log.info("✅ Conexión a base de datos establecida: {}", dbUrl);
             this.dbAvailable = true;
         } catch (Exception e) {
@@ -52,6 +58,10 @@ public class HikariDataSourceProvider {
             this.dataSource = Optional.empty();
             this.dbAvailable = false;
         }
+    }
+
+    HikariDataSource createDataSource(HikariConfig config) {
+        return new HikariDataSource(config);
     }
 
     public HikariDataSource getDataSource() {

@@ -1,0 +1,58 @@
+name: Retest
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  retest:
+    if: github.event.issue.pull_request != '' && contains(fromJson('["/retest", "rp retest"]'), github.event.comment.body)
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      checks: write
+      pull-requests: write
+    steps:
+      - name: Re-run failed checks
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            });
+
+            const runs = await github.rest.actions.listWorkflowRunsForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head_sha: pr.data.head.sha,
+              status: 'completed',
+              per_page: 20
+            });
+
+            const failed = runs.data.workflow_runs.filter(r => r.conclusion === 'failure');
+            if (failed.length === 0) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: '✅ Todos los checks están pasando, no hay nada que re-ejecutar.'
+              });
+              return;
+            }
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `🔄 Re-ejecutando ${failed.length} check(s) fallido(s)...`
+            });
+
+            for (const run of failed) {
+              await github.rest.actions.reRunWorkflow({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                run_id: run.id
+              });
+            }

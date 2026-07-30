@@ -8,4 +8,8 @@ public class PingService {
     public String ping() {
         return "pong";
     }
+
+    public String pingWithTimestamp() {
+        return "pong";
+    }
 }

@@ -12,8 +12,11 @@ import org.springframework.stereotype.Component;
 @SuppressWarnings("PMD.GuardLogStatement")
 public class ScopeUtils {
 
-    @Value("${spring.profiles.active:local}")
-    private String activeProfile;
+    private final String activeProfile;
+
+    public ScopeUtils(@Value("${spring.profiles.active:local}") String activeProfile) {
+        this.activeProfile = activeProfile;
+    }
 
     public boolean isLocal() {
         return Environment.LOCAL.getProfile().equals(activeProfile);
