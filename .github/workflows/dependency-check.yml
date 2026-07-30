@@ -15,5 +15,12 @@ jobs:
           java-version: '25'
           distribution: 'microsoft'
           cache: maven
+      - name: Cache OWASP data
+        uses: actions/cache@v4
+        with:
+          path: ~/.dependency-check
+          key: ${{ runner.os }}-dependency-check-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-dependency-check-
       - name: Run OWASP Dependency Check
-        run: mvn dependency-check:check -DskipTests
+        run: mvn dependency-check:check -DskipTests -DnvdApiKey=${{ secrets.NVD_API_KEY || '' }}

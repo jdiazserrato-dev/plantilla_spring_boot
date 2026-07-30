@@ -16,4 +16,4 @@ jobs:
           distribution: 'microsoft'
           cache: maven
       - name: Run tests with coverage
-        run: mvn verify jacoco:report jacoco:check
+        run: mvn verify

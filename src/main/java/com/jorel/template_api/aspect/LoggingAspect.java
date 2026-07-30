@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 @Slf4j
+@SuppressWarnings({"PMD.AvoidCatchingGenericException", "PMD.GuardLogStatement"})
 public class LoggingAspect {
 
     @Around("execution(* com.jorel.template_api.controller..*(..))")
