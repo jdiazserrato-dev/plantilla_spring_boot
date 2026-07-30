@@ -1,0 +1,24 @@
+name: Validate branch
+
+on:
+  pull_request:
+    branches: [develop, master]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check branch naming convention
+        run: |
+          if [[ "${{ github.base_ref }}" == "develop" ]]; then
+            if [[ ! "${{ github.head_ref }}" =~ ^feature/ ]]; then
+              echo "❌ PRs to develop must come from a feature/* branch"
+              exit 1
+            fi
+          elif [[ "${{ github.base_ref }}" == "master" ]]; then
+            if [[ ! "${{ github.head_ref }}" =~ ^release/ ]]; then
+              echo "❌ PRs to master must come from a release/* branch"
+              exit 1
+            fi
+          fi
+          echo "✅ Branch name validation passed"
